@@ -21,17 +21,18 @@ const routes = async (request,response) =>{
     switch (true) {
         case request.url === Home && request.method == GET:
             statusResponse.statusMessage = MESSAGE_WELCOME ;
+            setResponse(response,statusResponse);
             break;
         case request.url === Registro && request.method == POST:
-            registroController.registrarUser(request);
+            await registroController.registrarUser(request,response);
             break;   
         default:
             response.statusCode = BAD_REQUEST;
             statusResponse.status = BAD_REQUEST;
             statusResponse.statusMessage = MESSAGE_BAD_REQUEST;
+            setResponse(response,statusResponse);
             break;
     }
-    setResponse(response,statusResponse);
   
 }
 
