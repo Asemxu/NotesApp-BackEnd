@@ -1,6 +1,5 @@
 const isEmpty = (object) => { 
-    console.log(object);
-    return object === undefined;
+    return {status : object === undefined, user: object} ;
 }
 
 

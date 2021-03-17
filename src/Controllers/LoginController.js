@@ -1,5 +1,6 @@
 const { validarLogin } = require('../Validator/validator');
 const { MESSAGE_USER_LOGIN } = require('../Helpers/statusMessage');
+const User = require('../Models/User');
 const getBody = require('../Utils/getBody');
 class LoginController {
     constructor(){
@@ -14,6 +15,7 @@ class LoginController {
                 res.writeHead(200, {'Content-Type': 'application/json' ,})
                 return res.end(JSON.stringify(response));
             }catch(error){
+                console.log(error);
                 return res.end(JSON.stringify({status : 503,message: error})) 
 
             }

@@ -1,12 +1,12 @@
-const { EMPTYFIELDMESSAGE , EMAILNOTFORMAT , PASSDONTCOINCIDE ,EXISTUSERWITHEMAIL , DONTEXISTUSERWITHEMAIL}  = require('../Helpers/errorsMessage');
+const { EMPTYFIELDMESSAGE , EMAILNOTFORMAT , PASSDONTCOINCIDE ,EXISTUSERWITHEMAIL , DONTEXISTUSERWITHEMAIL , WRONGPASSWORD }  = require('../Helpers/errorsMessage');
 const { MESSAGE_OK } = require('../Helpers/statusMessage');
 const { PASS , DONTPASS } = require('../Helpers/statusCode');
 const User = require('../Models/User');
 const validator = require('validator');
+const bcrypt = require('bcrypt');
 
-
-const validarLogin = (userData) =>{
-    let respuesta = isValidLogin(userData);
+const validarLogin = async  (userData) =>{
+    let respuesta = await isValidLogin(userData);
     return respuesta;
 }
 
@@ -17,9 +17,13 @@ const isValidLogin = async (userData) =>{
     }
     if(validarCamposlogin(statusValid,userData)){
         let isUserNotFound = await validarUserExist(userData.correo);
-        if(isUserNotFound){
+        if(isUserNotFound.status){
              statusValid.status = DONTPASS;
-             statusValid.message = DONTEXISTUSERWITHEMAIL(userData.correo)
+             statusValid.message = DONTEXISTUSERWITHEMAIL(userData.correo);
+        }else{
+            let userDB = isUserNotFound.user;
+            let coinciden = await bcrypt.compare(userData.contraseña,userDB.contraseña);
+            !coinciden ?  statusValid = { status : DONTPASS , message : WRONGPASSWORD(userDB.correo)} : "";
         }
     }
     return statusValid;
@@ -40,8 +44,8 @@ const validarCamposlogin = (statusValid,userData) =>{
     return PASS;
 }
 
-const validarRegistro = (userData) =>{
-    let respuesta = isValidRegistro(userData);
+const validarRegistro = async (userData) =>{
+    let respuesta = await isValidRegistro(userData);
     return respuesta;
 }
 
@@ -54,7 +58,7 @@ const isValidRegistro = async (userData) =>{
 
     if(validarCamposRegistro(statusValid,userData)){
         let isUserFound = await validarUserExist(userData.correo);
-        if(!isUserFound){
+        if(!isUserFound.status){
             statusValid.status = DONTPASS;
             statusValid.message = EXISTUSERWITHEMAIL(userData.correo)
         }

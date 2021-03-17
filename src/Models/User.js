@@ -19,5 +19,8 @@ const findUserDB  = async (correoUser) =>{
     return isEmpty(encontro);
 }
 
+const setIsLogued = async (userData) =>{
 
-module.exports = { createUserDB  , findUserDB }
+}
+ 
+module.exports = { createUserDB  , findUserDB , setIsLogued}
