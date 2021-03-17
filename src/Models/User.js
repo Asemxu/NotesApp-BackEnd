@@ -3,6 +3,7 @@ const encryptarPass = require('../Utils/encryptPass');
 const getUUid = require('../Utils/getUUid');
 const usersDB = require('../Database/db.json');
 const writeDataToFile = require('../Utils/writeDataToFile');
+const isEmpty = require('../Utils/isEmpty');
 
 const createUserDB = async (user) =>{
     delete user.recontraseña;
@@ -13,5 +14,10 @@ const createUserDB = async (user) =>{
 
 }
 
+const findUserDB  = async (correoUser) =>{
+    const encontro = usersDB.users.find(user => user.correo === correoUser );
+    return isEmpty(encontro);
+}
 
-module.exports = { createUserDB }
+
+module.exports = { createUserDB  , findUserDB }

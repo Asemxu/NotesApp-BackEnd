@@ -5,7 +5,8 @@
       "contraseña": "$2b$10$Q7Kmd7d.o01Vz98Ghtoa.OPWcAFryqsH0hOGYRQe5La.kc728Op7K",
       "apellidos": "Jimenez",
       "correo": "hijo72@hotmail.com",
-      "id": "93a3fece-ede5-4b80-be8c-4251f145c429"
+      "id": "93a3fece-ede5-4b80-be8c-4251f145c429",
+      "isLogued":false
     }
   ]
 }
