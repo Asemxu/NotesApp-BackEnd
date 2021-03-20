@@ -9,14 +9,14 @@ class LoginController {
                 const userData = await getBody(req);
                 const response = await validarLogin(userData);
                 if(response.status){
-                    await User.setIsLogued(userData);
+                    response.user = await User.setIsLogued(userData);
                     response.message = MESSAGE_USER_LOGIN(userData.correo);
                 }
                 res.writeHead(200, {'Content-Type': 'application/json' ,})
                 return res.end(JSON.stringify(response));
             }catch(error){
                 console.log(error);
-                return res.end(JSON.stringify({status : 503,message: error})) 
+                return res.end(JSON.stringify({status : 503,message: error.message})) 
 
             }
         }

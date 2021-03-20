@@ -1,12 +1,13 @@
 {
   "users": [
     {
-      "nombres": "Pedro",
-      "contraseña": "$2b$10$Q7Kmd7d.o01Vz98Ghtoa.OPWcAFryqsH0hOGYRQe5La.kc728Op7K",
+      "nombres": "Paco",
+      "contraseña": "$2b$10$/T/etJEhrrW28ZLb0ccIBeXPND8b.vHq3VbG0i2vee.UajO3jGmeq",
       "apellidos": "Jimenez",
       "correo": "hijo72@hotmail.com",
-      "id": "93a3fece-ede5-4b80-be8c-4251f145c429",
-      "isLogued":false
+      "id": "686bb19e-30b7-45c0-a3ac-6cd518920793",
+      "isLogued": false,
+      "isActivated": true
     }
   ]
 }

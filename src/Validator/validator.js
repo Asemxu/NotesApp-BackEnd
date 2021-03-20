@@ -1,9 +1,10 @@
 const { EMPTYFIELDMESSAGE , EMAILNOTFORMAT , PASSDONTCOINCIDE ,EXISTUSERWITHEMAIL , DONTEXISTUSERWITHEMAIL , WRONGPASSWORD }  = require('../Helpers/errorsMessage');
-const { MESSAGE_OK } = require('../Helpers/statusMessage');
+const { MESSAGE_OK, CANT_ACTIVATED_ACCOUNT } = require('../Helpers/statusMessage');
 const { PASS , DONTPASS } = require('../Helpers/statusCode');
 const User = require('../Models/User');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
+const sendEmail = require('../Services/Email');
 
 const validarLogin = async  (userData) =>{
     let respuesta = await isValidLogin(userData);
@@ -90,7 +91,19 @@ const validarCamposRegistro = (statusValid,userData) =>{
 }
 
 const validarUserExist = (correo) =>{
-    return User.findUserDB(correo);
+    return User.isFindUserDB(correo);
 }
 
-module.exports = { validarRegistro , validarLogin }
+const validarSendEmail  = async  (transporter,response,user) =>{
+    let status = await sendEmail(transporter,response,user);
+    return status;
+}
+
+const validarIsActivated = async (uid) =>{
+    const userDB = await User.findUserDB(uid);
+    if(userDB!==undefined)
+        return {status : true};    
+    return {status : false , message : CANT_ACTIVATED_ACCOUNT};
+}
+
+module.exports = { validarRegistro , validarLogin , validarSendEmail , validarIsActivated }
