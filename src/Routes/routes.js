@@ -1,7 +1,7 @@
 const { Home , HomeSlash , Registro , Login ,Cuenta } = require('../Helpers/routesNames');
 const { BAD_REQUEST , OK , PASS } = require('../Helpers/statusCode');
 const { MESSAGE_OK , MESSAGE_BAD_REQUEST , MESSAGE_WELCOME} = require('../Helpers/statusMessage');
-const { GET , POST , DELETE , PUT } = require('../Helpers/requestMethods'); 
+const { GET , POST} = require('../Helpers/requestMethods'); 
 const RegistroController = require('../Controllers/RegistroController');
 const LoginController = require('../Controllers/LoginController');
 const CuentaController = require('../Controllers/CuentaController');
@@ -26,16 +26,16 @@ const routes = async (request,response,transporter) =>{
         case request.url === Registro && request.method == POST:
             await registroController.registrarUser(request,response,transporter);
             break;   
-        case  request.url === Login && request.method == PUT:
+        case  request.url === Login && request.method == POST:
             await loginController.loginUser(request,response);
             break
-        case request.url === Cuenta && request.method == PUT:
+        case request.url === Cuenta && request.method == POST:
             await cuentaController.activarCuenta(request,response);
             break;
         case request.url.match(/\/api\/v1\/AppNotes\/User\/(\w+\-+\w+)*$/) !== null:
             userController = new UserController(request.url)
             const path = userController.url.split('/').slice(-1)[0];
-            userController.validateRoutes(path,request,response);
+            userController.validateRoutes(path,request,response,transporter);
             break;
         default:
             response.statusCode = BAD_REQUEST;

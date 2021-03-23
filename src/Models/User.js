@@ -1,14 +1,15 @@
 // const fetch = require('node-fetch')
-const encryptarPass = require('../Utils/encryptPass');
+const encryptar = require('../Utils/encryptar');
 const usersDB = require('../Database/db.json');
 const writeDataToFile = require('../Utils/writeDataToFile');
 const isEmpty = require('../Utils/isEmpty');
 const getUUid = require('../Utils/getUUid');
-const { NOTACTIVATED , NOTLOGUED } = require('../Helpers/statusCode');
+const { CANTCHANGEPASS } = require('../Helpers/errorsMessage');
+const { NOTACTIVATED , NOTLOGUED , NOTFOUND } = require('../Helpers/statusCode');
 
 const createUserDB = async (user) =>{
     delete user.recontraseña;
-    user.contraseña = await encryptarPass(user.contraseña);
+    user.contraseña = await encryptar(user.contraseña);
     user.isLogued = NOTLOGUED;
     user.isActivated = NOTACTIVATED;
     usersDB.users.push(user);
@@ -16,7 +17,7 @@ const createUserDB = async (user) =>{
     return user;
 }
 
-const isFindUserDB  = async (correoUser) =>{
+const isfindUserDB   = async (correoUser) =>{
     const encontro = usersDB.users.find(user => user.correo === correoUser );
     return isEmpty(encontro);
 }
@@ -41,6 +42,22 @@ const setAcountActivated = async (uid) =>{
     return newID;
 }
 
+const cambiarContraseña = async  (userData,response) =>{
+    delete userData.recontraseña;
+    const userDBIndex = usersDB.users.findIndex(user => user.id ===  userData.id);
+    if(userDBIndex !== NOTFOUND){
+        const newID = getUUid();
+        userData.contraseña =  await encryptarPass(userData.contraseña);
+        usersDB.users[userDBIndex] = {...usersDB.users[userDBIndex],contraseña: userData.contraseña,id:newID};
+        writeDataToFile(`${process.env['DATABASE_PATH']}`,usersDB);
+        return response;
+    }
+    response.status = false;
+    response.message = CANTCHANGEPASS;
+    return response;
+   
+}
+
 const setChangeUid = (uid) =>{
     const newId = getUUid();
     const userDBIndex = usersDB.users.findIndex(user => user.id === uid);
@@ -49,8 +66,12 @@ const setChangeUid = (uid) =>{
     return newId;
 }
 
-const findUserDB = async (uid) =>{
+const findUserDB  = async (uid) =>{
     return usersDB.users.find(user => user.id === uid);
+}
+
+const findUserEmail = async (correo) =>{
+    return usersDB.users.find(user => user.correo === correo);
 }
 
 const cerrarSesion = async (uid) =>{
@@ -59,4 +80,4 @@ const cerrarSesion = async (uid) =>{
     writeDataToFile(`${process.env['DATABASE_PATH']}`,usersDB); 
 }
  
-module.exports = { createUserDB  , isFindUserDB , setIsLogued , findUserDB , setAcountActivated , cerrarSesion}
+module.exports = { createUserDB  , isfindUserDB  , setIsLogued , findUserDB  , setAcountActivated , cerrarSesion , findUserEmail , cambiarContraseña}

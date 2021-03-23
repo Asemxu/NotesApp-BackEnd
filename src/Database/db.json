@@ -1,13 +1,14 @@
 {
-  "users": [
-    {
-      "nombres": "Paco",
-      "contraseña": "$2b$10$/T/etJEhrrW28ZLb0ccIBeXPND8b.vHq3VbG0i2vee.UajO3jGmeq",
-      "apellidos": "Jimenez",
-      "correo": "hijo72@hotmail.com",
-      "id": "686bb19e-30b7-45c0-a3ac-6cd518920793",
-      "isLogued": false,
-      "isActivated": true
-    }
-  ]
+	"users": [
+		{
+			"nombres": "Renzo",
+			"apellidos": "Jimenez",
+			"correo": "hijo72@hotmail.com",
+			"contraseña": "$2b$10$6dUQ/SX1K3AfxgOUBcFSgOev2RoCQft3mcS6p1TZIdChGXYH75g7u",
+			"id": "5bad15df8a9048568b902da066190b27",
+			"isLogued": true,
+			"isActivated": true,
+			"avatar": ""
+		}
+	]
 }

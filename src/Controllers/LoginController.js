@@ -7,7 +7,7 @@ class LoginController {
         this.loginUser = async  (req,res) =>{
             try{
                 const userData = await getBody(req);
-                const response = await validarLogin(userData);
+                let response = await validarLogin(userData);
                 if(response.status){
                     response.user = await User.setIsLogued(userData);
                     response.message = MESSAGE_USER_LOGIN(userData.correo);

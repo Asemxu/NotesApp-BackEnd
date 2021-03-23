@@ -1,17 +1,19 @@
-const { CANTREGISTERUSER } = require('../Helpers/errorsMessage');
-const {  SEND_EMAIL_ACTIVATED } = require('../Helpers/statusMessage');
+const { CANTREGISTERUSER , CANTEMAIL } = require('../Helpers/errorsMessage');
+const {  SEND_EMAIL_ACTIVATED , SEND_EMAIL_CHANGE } = require('../Helpers/statusMessage');
 const emailOptions = require('./EmailOptions');
-const sendEmail = async (transporter,response,user) =>{
-    
-    try{
-        await transporter.sendMail(emailOptions(user));
-           
-        response.message = SEND_EMAIL_ACTIVATED;
-    }catch(error){
-        response.status = false;
-        response.message = CANTREGISTERUSER;
+const sendEmail = async (transporter,user,type) =>{
+    let status ={
+        status : true
     }
-    return response;
+    try{
+        await transporter.sendMail(emailOptions(user,type));
+        type === "Registro" ? status.message = SEND_EMAIL_ACTIVATED : status.message = SEND_EMAIL_CHANGE(user.correo);
+    }catch(error){
+        console.log(error);
+        status.status = false;
+        type === "Registro" ? status.message = CANTREGISTERUSER: status.message = CANTEMAIL;
+    }
+    return status;
 }
 
 

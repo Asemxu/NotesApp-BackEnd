@@ -1,28 +1,75 @@
-const { validarIsActivated } = require('../Validator/validator');
-const { DESLOGUED } = require('../Helpers/statusMessage');
+const { DESLOGUED , CHANGEPASS } = require('../Helpers/statusMessage');
 const User = require('../Models/User');
-const { cerrarSesion } = require('../Helpers/routesNames');
+const { cerrarSesion , emailCambiarContraseña , cambiarContraseña } = require('../Helpers/routesNames');
 const getBody = require('../Utils/getBody');
-const { GET , DELETE , PUT } = require('../Helpers/requestMethods'); 
-const  { WRONGDESLOGUED } = require('../Helpers/errorsMessage');
+const { POST , GET } = require('../Helpers/requestMethods'); 
+const  { WRONGMETHOD  } = require('../Helpers/errorsMessage');
+const { validarEmailContraseña , validarCambiarContraseña } = require('../Validator/validator');
+const { CHANGEPASSWORD } = require('../Helpers/statusCode');
+const sendEmail = require('../Services/Email');
 class UserController {
     constructor(url){
         this.url = url;
 
-        this.validateRoutes = (methodOrId,req,res) =>{
-            if(methodOrId === cerrarSesion){
-                if(req.method == PUT)
-                    signOut(req,res);
-                else
-                    setHeaders(false,WRONGDESLOGUED(req.method),res);
-
-            }else{
-                console.log("Method put post o delete");
+        this.validateRoutes = (methodOrId,req,res,transporter) =>{
+            switch(methodOrId){
+                case cerrarSesion:
+                    if(req.method == POST)
+                        signOut(req,res);
+                    else
+                        setHeaders(false,WRONGMETHOD(req.method),res);
+                    break;
+                case emailCambiarContraseña:
+                    if(req.method == POST)
+                        sendEmailPassWord(req,res,transporter);
+                    else
+                        setHeaders(false,WRONGMETHOD(req.method),res);
+                    break;
+                case cambiarContraseña:
+                    if(req.method == POST)
+                        changePassword(req,res);
+                    else
+                        setHeaders(false,WRONGMETHOD(req.method),res);
+                    break;
+                default:
+                    console.log("Method put post o delete");
+                    break;
             }
         }
-       
     }
-     
+}
+
+const changePassword = async (req,res) =>{
+    try{
+        const userData= await getBody(req);
+        let response = await validarCambiarContraseña(userData);
+        if(response.status){
+            response = await User.cambiarContraseña(userData,response);
+            if(response.status)
+                response.message = CHANGEPASS;
+        }
+        setHeaders(response.status,response.message,res);
+    }catch(error){
+        console.log(error); 
+        setHeaders(503,error.message,res);
+    }
+}
+
+const sendEmailPassWord  = async (req,res,transporter) =>{
+    try{
+        const userEmail = await getBody(req);
+        let response = await validarEmailContraseña(userEmail.correo);
+        if(response.status){
+            const userData = await User.findUserEmail(userEmail.correo);
+            const response_data = await sendEmail(transporter,userData,CHANGEPASSWORD);
+            response.status = response_data.status;
+            response.message = response_data.message;
+        }
+        setHeaders(response.status,response.message,res);
+    }catch(error){
+        console.log(error); 
+        setHeaders(503,error.message,res);
+    }
 }
 
 const signOut = async  (req,res) =>{
@@ -30,7 +77,6 @@ const signOut = async  (req,res) =>{
         const userId = await getBody(req);
         await User.cerrarSesion(userId.id);
         setHeaders(true,DESLOGUED,res);
-
     }catch(error){
         console.log(error); 
         setHeaders(503,error.message,res);

@@ -13,9 +13,11 @@ const transport = transporter(nodemailer);
 const hostname = process.env['HOST'];
 
 const app = http.createServer((req, res) => {
-    res.setHeader( "Access-Control-Allow-Headers" , "Content-Type");
+
+    res.setHeader( "Access-Control-Allow-Headers" , "content-type");
     res.setHeader( "Access-Control-Allow-Origin" , "*");
-    res.setHeader( "Access-Control-Allow-Methods" , "*");
+    res.setHeader("Access-Control-Request-Method", "*");
+    res.setHeader( "Access-Control-Allow-Methods" ,"*");
     routes(req,res,transport);
 
 });

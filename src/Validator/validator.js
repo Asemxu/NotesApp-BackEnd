@@ -1,4 +1,5 @@
-const { EMPTYFIELDMESSAGE , EMAILNOTFORMAT , PASSDONTCOINCIDE ,EXISTUSERWITHEMAIL , DONTEXISTUSERWITHEMAIL , WRONGPASSWORD }  = require('../Helpers/errorsMessage');
+const { EMPTYFIELDMESSAGE , EMAILNOTFORMAT , PASSDONTCOINCIDE ,EXISTUSERWITHEMAIL , DONTEXISTUSERWITHEMAIL , WRONGPASSWORD , EMAILISOBLIGATED ,ISNOTEMAIL , DONTEXISTUSER 
+    , ITSNOTACTIVATED }  = require('../Helpers/errorsMessage');
 const { MESSAGE_OK, CANT_ACTIVATED_ACCOUNT } = require('../Helpers/statusMessage');
 const { PASS , DONTPASS } = require('../Helpers/statusCode');
 const User = require('../Models/User');
@@ -23,8 +24,13 @@ const isValidLogin = async (userData) =>{
              statusValid.message = DONTEXISTUSERWITHEMAIL(userData.correo);
         }else{
             let userDB = isUserNotFound.user;
-            let coinciden = await bcrypt.compare(userData.contraseña,userDB.contraseña);
-            !coinciden ?  statusValid = { status : DONTPASS , message : WRONGPASSWORD(userDB.correo)} : "";
+            if(!userDB.isActivated){
+                statusValid = { status : DONTPASS , message : ITSNOTACTIVATED(userDB.correo)}
+            }else{
+                let coinciden = await bcrypt.compare(userData.contraseña,userDB.contraseña);
+                !coinciden ?  statusValid = { status : DONTPASS , message : WRONGPASSWORD(userDB.correo)} : "";
+            }
+            
         }
     }
     return statusValid;
@@ -91,19 +97,57 @@ const validarCamposRegistro = (statusValid,userData) =>{
 }
 
 const validarUserExist = (correo) =>{
-    return User.isFindUserDB(correo);
+    return User.isfindUserDB (correo);
 }
 
-const validarSendEmail  = async  (transporter,response,user) =>{
-    let status = await sendEmail(transporter,response,user);
+const validarSendEmail  = async  (transporter,user,type) =>{
+    let status = await sendEmail(transporter,user,type);
     return status;
 }
 
 const validarIsActivated = async (uid) =>{
-    const userDB = await User.findUserDB(uid);
+    const userDB = await User.findUserDB (uid);
     if(userDB!==undefined)
         return {status : true};    
     return {status : false , message : CANT_ACTIVATED_ACCOUNT};
 }
 
-module.exports = { validarRegistro , validarLogin , validarSendEmail , validarIsActivated }
+const validarEmailContraseña = async (correo) =>{
+    let response ={
+        status : true
+    }
+    if(validator.isEmpty(correo)){
+        response.message = EMAILISOBLIGATED;
+        response.status = false;
+    }else{
+        if(!validator.isEmail(correo)){
+            response.message = ISNOTEMAIL(correo);
+            response.status = false;
+        }else{
+            const userData = await User.findUserEmail(correo);
+            if(userData === undefined || userData === null){
+                response.status = false;
+                response.message = DONTEXISTUSER(correo);
+            }
+        }
+    }
+    return response
+}
+
+const validarCambiarContraseña = async (userData) =>{
+    let status = {
+        status : true,
+    }
+    if(validator.isEmpty(userData.contraseña) || validator.isEmpty(userData.recontraseña)){
+        status.message = EMPTYFIELDMESSAGE;
+        status.status = false;
+    }else{
+        if(userData.contraseña !== userData.recontraseña){
+            status.message = PASSDONTCOINCIDE
+            status.status = false;
+        }
+    }
+    return status;
+}
+
+module.exports = { validarRegistro , validarLogin , validarSendEmail , validarIsActivated , validarEmailContraseña , validarCambiarContraseña}
