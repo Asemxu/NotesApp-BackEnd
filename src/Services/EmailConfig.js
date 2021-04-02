@@ -1,13 +1,10 @@
-const transporter =  (nodemailer) => { 
+const transporter =  (nodemailer) => {
     return nodemailer.createTransport({
-        host:'smtp.gmail.com',
-        port: 465,
-        secure:true,
+        service:process.env['SERVICE'],
         auth: {
             user: process.env['EMAIL'],
             pass: process.env['PASS']
-        },
-       
+        } 
     })
     
 }
