@@ -48,7 +48,7 @@ const cambiarContraseña = async  (userData,response) =>{
     const userDBIndex = usersDB.users.findIndex(user => user.id ===  userData.id);
     if(userDBIndex !== NOTFOUND){
         const newID = getUUid();
-        userData.contraseña =  await encryptarPass(userData.contraseña);
+        userData.contraseña =  await encryptar(userData.contraseña);
         usersDB.users[userDBIndex] = {...usersDB.users[userDBIndex],contraseña: userData.contraseña,id:newID};
         writeDataToFile(`${process.env['DATABASE_PATH']}`,usersDB);
         return response;

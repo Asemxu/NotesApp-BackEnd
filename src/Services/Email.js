@@ -5,16 +5,15 @@ const sendEmail = async (transporter,user,type) =>{
     let status ={
         status : true
     }
-
     try{
         await transporter.sendMail(emailOptions(user,type));
         type === "Registro" ? status.message = SEND_EMAIL_ACTIVATED : status.message = SEND_EMAIL_CHANGE(user.correo);
     }catch(error){
         console.log(error);
         status.status = false;
-        type === "Registro" ? status.message = {error ,options:transporter.config} : status.message = CANTEMAIL;
+        type === "Registro" ? status.message = CANTREGISTERUSER : status.message = CANTEMAIL;
     }
-    return status
+    return status;
 }
 
 
