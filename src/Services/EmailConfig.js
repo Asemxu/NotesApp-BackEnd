@@ -6,10 +6,7 @@ const transporter =  (nodemailer) => {
             user: process.env['EMAIL'],
             pass: process.env['PASS']
         },
-        tls: {
-            // do not fail on invalid certs
-            rejectUnauthorized: false
-        },
+      
     })
     
 }
