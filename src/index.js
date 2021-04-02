@@ -9,8 +9,11 @@ const port = process.env.PORT || 3000 ;
 dotenv.config();
 
 const transport = transporter(nodemailer);
-console.log(process.env['HOS']);
+console.log(process.env['HOST']);
 console.log(process.env['PAGE_HOST']);
+console.log(process.env['SERVICE']);
+console.log(process.env['EMAIL']);
+console.log(process.env['PASS']);
 const hostname = process.env['HOST'];
 
 const app = http.createServer((req, res) => {
