@@ -13,7 +13,7 @@ const sendEmail = async (transporter,user,type) =>{
         status.status = false;
         type === "Registro" ? status.message = error : status.message = CANTEMAIL;
     }
-    return status;
+    return status
 }
 
 
