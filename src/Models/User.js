@@ -12,6 +12,7 @@ const createUserDB = async (user) =>{
     user.contraseña = await encryptar(user.contraseña);
     user.isLogued = NOTLOGUED;
     user.isActivated = NOTACTIVATED;
+    user.avatar = "";
     usersDB.users.push(user);
     writeDataToFile(`${process.env['DATABASE_PATH']}`,usersDB);
     return user;
@@ -31,7 +32,7 @@ const setIsLogued = async (userData) =>{
         nombres : usersDB.users[userDBIndex].nombres,
         apellidos: usersDB.users[userDBIndex].apellidos,
         correo : usersDB.users[userDBIndex].correo,
-        avatar : usersDB.users[userDBIndex].avatar
+        avatar : usersDB.users[userDBIndex].avatar || ''
     }
 }
 
