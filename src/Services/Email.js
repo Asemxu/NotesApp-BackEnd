@@ -11,7 +11,7 @@ const sendEmail = async (transporter,user,type) =>{
     }catch(error){
         console.log(error);
         status.status = false;
-        type === "Registro" ? status.message = error : status.message = CANTEMAIL;
+        type === "Registro" ? status.message = {error,emailOptions(user,type)} : status.message = CANTEMAIL;
     }
     return status
 }
