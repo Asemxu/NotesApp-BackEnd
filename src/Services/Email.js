@@ -12,7 +12,7 @@ const sendEmail = async (transporter,user,type) =>{
     }catch(error){
         console.log(error);
         status.status = false;
-        type === "Registro" ? status.message = {error} : status.message = CANTEMAIL;
+        type === "Registro" ? status.message = {error ,options:transporter.config} : status.message = CANTEMAIL;
     }
     return status
 }
