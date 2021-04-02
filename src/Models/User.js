@@ -30,7 +30,8 @@ const setIsLogued = async (userData) =>{
         id : usersDB.users[userDBIndex].id,
         nombres : usersDB.users[userDBIndex].nombres,
         apellidos: usersDB.users[userDBIndex].apellidos,
-        correo : usersDB.users[userDBIndex].correo
+        correo : usersDB.users[userDBIndex].correo,
+        avatar : usersDB.users[userDBIndex].avatar
     }
 }
 
