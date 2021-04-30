@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "description": "Aplicación para el guardado de notas",
   "engines": {
-    "node": "v14.15.0",
-    "npm":"6.14.8"
+    "node": "v10.18.0",
+    "npm": "6.13.4"
   },
   "main": "./src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon  ./",
-    "start": "node ./src/index.js",
+    "start": "vercel dev",
+    "deploy": "vercel deploy --prod"
   },
   "keywords": [
     "javascript",
@@ -27,6 +27,7 @@
     "node-fetch": "^2.6.1",
     "nodemailer": "^6.5.0",
     "uuid": "^8.3.2",
-    "validator": "^13.5.2"
+    "validator": "^13.5.2",
+    "vercel": "^21.3.3"
   }
 }
